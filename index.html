@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WeatherPro — Enterprise Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Status Bar -->
+  <div class="status-bar">
+    <div class="status-left">
+      <span class="status-dot"></span>
+      <span class="status-text">All systems operational</span>
+      <span class="status-divider">|</span>
+      <span class="status-text">OpenWeather API</span>
+      <span class="badge badge-green">Live</span>
+    </div>
+    <div class="status-right">
+      <span id="liveTime" class="status-text"></span>
+      <span class="status-divider">|</span>
+      <span class="status-text">WeatherPro v3.2.1</span>
+    </div>
+  </div>
+
+  <!-- App Shell -->
+  <div class="app-shell">
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon"><i class="fas fa-satellite-dish"></i></div>
+        <div class="brand-text">
+          <span class="brand-name">WeatherPro</span>
+          <span class="brand-tier">Enterprise</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">WORKSPACE</div>
+        <a href="#" class="nav-item active" onclick="navigateTo('dashboard', this); return false;">
+          <i class="fas fa-gauge-high"></i>
+          <span>Dashboard</span>
+          <span class="nav-badge">Live</span>
+        </a>
+        <a href="#" class="nav-item" onclick="navigateTo('location', this); return false;">
+          <i class="fas fa-map-location-dot"></i>
+          <span>Location Hub</span>
+        </a>
+        <a href="#" class="nav-item" onclick="navigateTo('forecasts', this); return false;">
+          <i class="fas fa-chart-line"></i>
+          <span>Forecasts</span>
+        </a>
+        <a href="#" class="nav-item" onclick="navigateTo('alerts', this); return false;">
+          <i class="fas fa-triangle-exclamation"></i>
+          <span>Alerts</span>
+          <span class="nav-badge alert">3</span>
+        </a>
+
+        <div class="nav-section-label">ANALYTICS</div>
+        <a href="#" class="nav-item" onclick="navigateTo('storm', this); return false;">
+          <i class="fas fa-cloud-bolt"></i>
+          <span>Storm Tracker</span>
+        </a>
+        <a href="#" class="nav-item" onclick="navigateTo('global', this); return false;">
+          <i class="fas fa-earth-americas"></i>
+          <span>Global View</span>
+        </a>
+        <a href="#" class="nav-item" onclick="navigateTo('export', this); return false;">
+          <i class="fas fa-database"></i>
+          <span>Data Export</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <button class="theme-toggle-btn" onclick="toggleDarkMode()" id="themeToggle">
+          <i class="fas fa-moon"></i>
+          <span>Dark Mode</span>
+          <div class="toggle-switch" id="toggleSwitch"></div>
+        </button>
+        <div class="user-profile">
+          <div class="user-avatar">OM</div>
+          <div class="user-info">
+            <span class="user-name">Omiee</span>
+            <span class="user-role">Analyst</span>
+          </div>
+          <i class="fas fa-chevron-right user-chevron"></i>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- Top Bar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="sidebar-toggle" onclick="toggleSidebar()">
+            <i class="fas fa-bars"></i>
+          </button>
+          <div class="page-breadcrumb">
+            <span class="breadcrumb-root">WeatherPro</span>
+            <i class="fas fa-chevron-right breadcrumb-sep"></i>
+            <span class="breadcrumb-current" id="breadcrumbCurrent">Dashboard</span>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <div class="search-pill" id="topbarSearch">
+            <i class="fas fa-search"></i>
+            <input type="text" id="cityInput" placeholder="Search city, coordinates or ICAO..." class="search-pill-input">
+            <button class="search-pill-btn" onclick="getWeather()">
+              <i class="fas fa-arrow-right"></i>
+            </button>
+          </div>
+          <button class="topbar-btn location-topbar-btn" onclick="getLocationWeather()" title="Use current location">
+            <i class="fas fa-location-crosshairs"></i>
+            <span>My Location</span>
+          </button>
+          <button class="topbar-btn icon-only" title="Notifications">
+            <i class="fas fa-bell"></i>
+            <span class="notif-dot"></span>
+          </button>
+          <button class="topbar-btn icon-only" title="Settings">
+            <i class="fas fa-sliders"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- Page Body -->
+      <div class="page-body">
+
+        <!-- ====== DASHBOARD PAGE ====== -->
+        <div id="page-dashboard" class="page active">
+          <div class="hero-strip">
+            <div class="hero-text">
+              <h1 class="hero-title">Weather Intelligence <span class="hero-accent">Dashboard</span></h1>
+              <p class="hero-sub">Real-time atmospheric data · Powered by OpenWeather Global Network</p>
+            </div>
+            <div class="hero-kpi-row">
+              <div class="kpi-chip"><i class="fas fa-signal"></i><span>40,000+ Stations</span></div>
+              <div class="kpi-chip"><i class="fas fa-rotate"></i><span>Updates every 10 min</span></div>
+              <div class="kpi-chip"><i class="fas fa-globe"></i><span>195 Countries</span></div>
+            </div>
+          </div>
+          <div id="weather" class="weather-area">
+            <div class="empty-state">
+              <div class="empty-visual">
+                <div class="empty-orb"><i class="fas fa-cloud-sun"></i></div>
+                <div class="empty-rings">
+                  <div class="ring ring-1"></div>
+                  <div class="ring ring-2"></div>
+                  <div class="ring ring-3"></div>
+                </div>
+              </div>
+              <h2 class="empty-title">No station selected</h2>
+              <p class="empty-sub">Search for a city above or use your current location to load live weather data.</p>
+              <div class="empty-suggestions">
+                <span class="suggest-label">Quick load:</span>
+                <button class="suggest-chip" onclick="quickLoad('Mumbai')">Mumbai</button>
+                <button class="suggest-chip" onclick="quickLoad('London')">London</button>
+                <button class="suggest-chip" onclick="quickLoad('New York')">New York</button>
+                <button class="suggest-chip" onclick="quickLoad('Tokyo')">Tokyo</button>
+                <button class="suggest-chip" onclick="quickLoad('Dubai')">Dubai</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== LOCATION HUB PAGE ====== -->
+        <div id="page-location" class="page">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">Location <span class="hero-accent">Hub</span></h1>
+              <p class="page-desc">Manage and compare multiple weather stations worldwide.</p>
+            </div>
+            <button class="primary-btn" onclick="addLocation()">
+              <i class="fas fa-plus"></i> Add Location
+            </button>
+          </div>
+
+          <div class="location-search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" id="locationSearchInput" placeholder="Search and add a city to compare..." class="loc-input">
+            <button class="search-pill-btn" onclick="addLocationFromInput()"><i class="fas fa-arrow-right"></i></button>
+          </div>
+
+          <div id="locationGrid" class="location-grid">
+            <div class="loc-empty">
+              <i class="fas fa-map-pin"></i>
+              <p>No locations added yet. Search a city above to start comparing.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== FORECASTS PAGE ====== -->
+        <div id="page-forecasts" class="page">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">7-Day <span class="hero-accent">Forecasts</span></h1>
+              <p class="page-desc">Extended outlook for your tracked locations.</p>
+            </div>
+          </div>
+          <div class="forecast-city-selector">
+            <input type="text" id="forecastCityInput" placeholder="Enter city for forecast..." class="fc-input">
+            <button class="primary-btn" onclick="loadForecast()"><i class="fas fa-cloud-sun-rain"></i> Load Forecast</button>
+          </div>
+          <div id="forecastContent">
+            <div class="empty-state small">
+              <div class="empty-orb small-orb"><i class="fas fa-chart-line"></i></div>
+              <h2 class="empty-title">No forecast loaded</h2>
+              <p class="empty-sub">Enter a city name above to view its extended forecast.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== ALERTS PAGE ====== -->
+        <div id="page-alerts" class="page">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">Weather <span class="hero-accent">Alerts</span></h1>
+              <p class="page-desc">Active warnings and severe weather notifications.</p>
+            </div>
+            <span class="badge-count">3 Active</span>
+          </div>
+          <div class="alerts-grid">
+            <div class="alert-card danger">
+              <div class="alert-header">
+                <div class="alert-icon-wrap danger"><i class="fas fa-wind"></i></div>
+                <div>
+                  <div class="alert-title">High Wind Warning</div>
+                  <div class="alert-meta">Mumbai, Maharashtra · Issued 2h ago</div>
+                </div>
+                <span class="alert-severity danger">SEVERE</span>
+              </div>
+              <p class="alert-body">Sustained winds of 65–80 km/h expected through Saturday evening. Avoid exposed coastal areas. Secure loose outdoor objects.</p>
+              <div class="alert-footer">
+                <span><i class="fas fa-clock"></i> Expires in 14 hrs</span>
+                <span><i class="fas fa-location-dot"></i> Mumbai Region</span>
+              </div>
+            </div>
+            <div class="alert-card warning">
+              <div class="alert-header">
+                <div class="alert-icon-wrap warning"><i class="fas fa-cloud-rain"></i></div>
+                <div>
+                  <div class="alert-title">Heavy Rainfall Advisory</div>
+                  <div class="alert-meta">Thane District · Issued 5h ago</div>
+                </div>
+                <span class="alert-severity warning">MODERATE</span>
+              </div>
+              <p class="alert-body">Rainfall accumulations of 80–120mm possible over 24 hours. Urban flooding likely in low-lying areas. Motorists should exercise caution.</p>
+              <div class="alert-footer">
+                <span><i class="fas fa-clock"></i> Expires in 20 hrs</span>
+                <span><i class="fas fa-location-dot"></i> Thane District</span>
+              </div>
+            </div>
+            <div class="alert-card info">
+              <div class="alert-header">
+                <div class="alert-icon-wrap info"><i class="fas fa-smog"></i></div>
+                <div>
+                  <div class="alert-title">Air Quality Notice</div>
+                  <div class="alert-meta">Delhi NCR · Issued 1h ago</div>
+                </div>
+                <span class="alert-severity info">ADVISORY</span>
+              </div>
+              <p class="alert-body">AQI levels reaching 180–220 (Unhealthy). Sensitive groups should limit prolonged outdoor exertion. Masks recommended in outdoor settings.</p>
+              <div class="alert-footer">
+                <span><i class="fas fa-clock"></i> Expires in 8 hrs</span>
+                <span><i class="fas fa-location-dot"></i> Delhi NCR</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== STORM TRACKER PAGE ====== -->
+        <div id="page-storm" class="page">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">Storm <span class="hero-accent">Tracker</span></h1>
+              <p class="page-desc">Monitor active cyclones, depressions and severe weather systems.</p>
+            </div>
+            <span class="badge-live pulse">● LIVE TRACKING</span>
+          </div>
+
+          <div class="storm-stats-row">
+            <div class="storm-stat-card">
+              <div class="storm-stat-icon red"><i class="fas fa-hurricane"></i></div>
+              <div class="storm-stat-val">2</div>
+              <div class="storm-stat-label">Active Cyclones</div>
+            </div>
+            <div class="storm-stat-card">
+              <div class="storm-stat-icon amber"><i class="fas fa-cloud-bolt"></i></div>
+              <div class="storm-stat-val">7</div>
+              <div class="storm-stat-label">Thunderstorm Cells</div>
+            </div>
+            <div class="storm-stat-card">
+              <div class="storm-stat-icon blue"><i class="fas fa-water"></i></div>
+              <div class="storm-stat-val">3</div>
+              <div class="storm-stat-label">Flood Watches</div>
+            </div>
+            <div class="storm-stat-card">
+              <div class="storm-stat-icon green"><i class="fas fa-wind"></i></div>
+              <div class="storm-stat-val">112</div>
+              <div class="storm-stat-label">Max Wind (km/h)</div>
+            </div>
+          </div>
+
+          <div class="storm-list">
+            <div class="section-title-row">
+              <span class="section-title">Active Systems</span>
+              <span class="section-sub">Updated 4 minutes ago</span>
+            </div>
+            <div class="storm-item cat3">
+              <div class="storm-cat-badge cat3">CAT 3</div>
+              <div class="storm-info">
+                <div class="storm-name">Cyclone BIPARJOY</div>
+                <div class="storm-detail">Arabian Sea · 18.4°N, 65.2°E · Moving NNW at 12 km/h</div>
+              </div>
+              <div class="storm-metrics">
+                <div class="storm-metric"><span class="sm-label">Max Wind</span><span class="sm-val">185 km/h</span></div>
+                <div class="storm-metric"><span class="sm-label">Pressure</span><span class="sm-val">952 hPa</span></div>
+                <div class="storm-metric"><span class="sm-label">Status</span><span class="sm-val red-txt">Intensifying</span></div>
+              </div>
+            </div>
+            <div class="storm-item cat1">
+              <div class="storm-cat-badge cat1">CAT 1</div>
+              <div class="storm-info">
+                <div class="storm-name">Depression ARB-02</div>
+                <div class="storm-detail">Bay of Bengal · 12.1°N, 88.5°E · Moving E at 8 km/h</div>
+              </div>
+              <div class="storm-metrics">
+                <div class="storm-metric"><span class="sm-label">Max Wind</span><span class="sm-val">75 km/h</span></div>
+                <div class="storm-metric"><span class="sm-label">Pressure</span><span class="sm-val">998 hPa</span></div>
+                <div class="storm-metric"><span class="sm-label">Status</span><span class="sm-val amber-txt">Steady</span></div>
+              </div>
+            </div>
+            <div class="storm-item ts">
+              <div class="storm-cat-badge ts">T-STORM</div>
+              <div class="storm-info">
+                <div class="storm-name">Thunderstorm Cluster MH-04</div>
+                <div class="storm-detail">Maharashtra Coast · 19.0°N, 72.8°E · Stationary</div>
+              </div>
+              <div class="storm-metrics">
+                <div class="storm-metric"><span class="sm-label">Max Wind</span><span class="sm-val">60 km/h</span></div>
+                <div class="storm-metric"><span class="sm-label">Pressure</span><span class="sm-val">1002 hPa</span></div>
+                <div class="storm-metric"><span class="sm-label">Status</span><span class="sm-val green-txt">Weakening</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== GLOBAL VIEW PAGE ====== -->
+        <div id="page-global" class="page">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">Global <span class="hero-accent">View</span></h1>
+              <p class="page-desc">Snapshot of current weather conditions across major world cities.</p>
+            </div>
+            <button class="primary-btn" onclick="refreshGlobalView()"><i class="fas fa-rotate"></i> Refresh</button>
+          </div>
+
+          <div class="global-region-tabs">
+            <button class="region-tab active" onclick="filterRegion('all', this)">All Regions</button>
+            <button class="region-tab" onclick="filterRegion('asia', this)">Asia</button>
+            <button class="region-tab" onclick="filterRegion('europe', this)">Europe</button>
+            <button class="region-tab" onclick="filterRegion('americas', this)">Americas</button>
+            <button class="region-tab" onclick="filterRegion('middle-east', this)">Middle East</button>
+          </div>
+
+          <div id="globalGrid" class="global-grid">
+            <div class="empty-state small" id="globalLoading">
+              <div class="spinner-small"></div>
+              <p class="empty-sub">Loading global data...</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== DATA EXPORT PAGE ====== -->
+        <div id="page-export" class="page">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title">Data <span class="hero-accent">Export</span></h1>
+              <p class="page-desc">Download weather reports in multiple formats for analysis.</p>
+            </div>
+          </div>
+
+          <div class="export-layout">
+            <div class="export-config-card">
+              <div class="export-section-title"><i class="fas fa-sliders"></i> Export Configuration</div>
+
+              <div class="form-group">
+                <label class="form-label">City / Station</label>
+                <input type="text" id="exportCity" class="form-input" placeholder="e.g. Mumbai">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Report Type</label>
+                <select class="form-input" id="exportType">
+                  <option value="current">Current Conditions</option>
+                  <option value="summary">Daily Summary</option>
+                  <option value="full">Full Atmospheric Report</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Format</label>
+                <div class="format-options">
+                  <label class="format-opt active" id="fmt-json" onclick="selectFormat('json', this)">
+                    <i class="fas fa-code"></i> JSON
+                  </label>
+                  <label class="format-opt" id="fmt-csv" onclick="selectFormat('csv', this)">
+                    <i class="fas fa-table"></i> CSV
+                  </label>
+                  <label class="format-opt" id="fmt-txt" onclick="selectFormat('txt', this)">
+                    <i class="fas fa-file-lines"></i> TXT
+                  </label>
+                </div>
+              </div>
+              <button class="primary-btn full-width" onclick="generateExport()">
+                <i class="fas fa-download"></i> Generate &amp; Download
+              </button>
+            </div>
+
+            <div class="export-preview-card">
+              <div class="export-section-title"><i class="fas fa-eye"></i> Preview</div>
+              <div id="exportPreview" class="export-preview-box">
+                <span class="preview-placeholder">Configure your export on the left and click Generate.</span>
+              </div>
+              <div id="exportActions" class="export-actions" style="display:none;">
+                <button class="outline-btn" onclick="copyExport()"><i class="fas fa-copy"></i> Copy</button>
+                <button class="primary-btn" onclick="downloadExport()"><i class="fas fa-download"></i> Download</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end page-body -->
+    </main>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loadingSpinner" class="loading-overlay">
+    <div class="loading-card">
+      <div class="loading-rings">
+        <div class="l-ring"></div>
+        <div class="l-ring"></div>
+        <div class="l-ring"></div>
+      </div>
+      <p class="loading-label">Fetching station data...</p>
+      <p class="loading-sub">Connecting to OpenWeather API</p>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
