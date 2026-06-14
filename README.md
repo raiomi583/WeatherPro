@@ -131,23 +131,28 @@ const API_KEY = "YOUR_API_KEY";
 
 ### Dashboard
 
-(Add Screenshot Here)
+<img width="1917" height="1013" alt="image" src="https://github.com/user-attachments/assets/5dd4acfb-3c0c-441e-ba32-e45dfa351049" />
+
 
 ### Global View
 
-(Add Screenshot Here)
+<img width="1912" height="913" alt="image" src="https://github.com/user-attachments/assets/ff6ac6d6-1424-4707-a225-d6ac23e4f3ee" />
+
 
 ### Forecast Page
 
-(Add Screenshot Here)
+<img width="1918" height="922" alt="image" src="https://github.com/user-attachments/assets/c804e71e-c274-4b2f-b4d7-8730cfd68058" />
+
 
 ### Weather Alerts
 
-(Add Screenshot Here)
+<img width="1918" height="922" alt="image" src="https://github.com/user-attachments/assets/387dd5b7-fccf-41eb-ae14-4dd98e582552" />
 
-### Dark Mode
 
-(Add Screenshot Here)
+### Data Export
+
+<img width="1918" height="923" alt="image" src="https://github.com/user-attachments/assets/a33f4fdc-02cb-4a10-be34-eae4deff2432" />
+
 
 ---
 
